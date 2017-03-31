@@ -1,0 +1,56 @@
+
+int read_line(int newSd, char *line_to_return)
+{
+	static int rcv_ptr = 0;
+	static char rcv_msg[MAX_MSG];
+	static int n;
+	int offset;
+	offset = 0;
+	
+	while(1)
+	{
+		if(rcv_ptr == 0)
+		{
+			/*read data from socket*/
+			memset(rcv_msg, 0x0, MAX_MSG);/*init buffer*/
+			n = recv(newSd, rcv_msg, MAX_MSG, 0); /*wait for data*/
+			
+			if(n<0)
+			{
+				perror("cannot receive data");
+				return ERROR;
+			}
+			else if(n==0)
+			{
+				printf("Connection closed by client\n");
+				close(newSd);
+				return ERROR;
+			}
+		}
+		
+		/*copy line into line_to_return*/
+		while(*(rcv_msg+rcv_ptr)!= END_LINE && rcv_ptr<n)
+		{
+			memcpy(line_to_return+offset, rcv_msg+rcv_ptr, 1);
+			offset++;
+			rcv_ptr++;
+		}
+		
+		if(rcv_ptr == n-1)
+		{
+			*(line_to_return+offset) = END_LINE;
+			rcv_ptr = 0;
+			return ++offset;
+		}
+		
+		if(rcv_ptr < n-1)
+		{
+			*(line_to_return+offset) = END_LINE;
+			rcv_ptr++;
+			return ++offset;
+		}
+		
+		if(rcv_ptr == n)
+			rcv_ptr = 0;
+	}
+}
