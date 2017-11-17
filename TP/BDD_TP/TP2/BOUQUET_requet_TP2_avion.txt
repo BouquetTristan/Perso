@@ -1,0 +1,99 @@
+SELECT nom FROM pilote NATURAL JOIN vol WHERE ville_dep = ANY(SELECT ville_dep FROM vol WHERE ville_dep = 'Paris Orly');
+   nom    
+----------
+ Pierre
+ Paul
+ Philippe
+ Frederic
+
+
+SELECT T1.nom, T2.nom FROM pilote T1 INNER JOIN pilote T2 ON T1.ville = T2.ville AND T1.nom != T2.nom;
+   nom   |   nom   
+---------+---------
+ Pierre  | Jacques
+ Pierre  | Paul
+ Paul    | Jacques
+ Paul    | Pierre
+ Jacques | Paul
+ Jacques | Pierre
+
+
+SELECT id_avion, loc FROM avion WHERE loc != 'Paris Orly' AND capac > 200 ORDER BY id_avion;
+ id_avion |         loc         
+----------+---------------------
+      100 | Marseille Marignane
+      101 | Strasbourg
+      103 | Marseille Marignane
+      104 | Paris Roissy
+      105 | Toulouse
+      107 | Bordeaux
+      112 | Avignon
+
+
+SELECT nom FROM pilote NATURAL JOIN vol NATURAL JOIN avion WHERE type LIKE 'ATR%';
+  nom  
+-------
+ Marie
+
+
+SELECT DISTINCT nom, loc, id_avion FROM pilote NATURAL JOIN vol NATURAL JOIN avion WHERE loc = ANY(SELECT loc FROM avion WHERE type LIKE 'B747');
+   nom    |    loc     | id_avion 
+----------+------------+----------
+ Paul     | Paris Orly |      102
+ Cecile   | Paris Orly |      110
+ Marie    | Avignon    |      108
+ Fernande | Paris Orly |      123
+ Jacques  | Avignon    |      112
+
+
+SELECT nom, loc, id_avion FROM pilote NATURAL JOIN avion WHERE STRPOS(loc, ville) != 0 AND type = 'B747';
+   nom   |    loc     | id_avion 
+---------+------------+----------
+ Pierre  | Paris Orly |      106
+ Paul    | Paris Orly |      106
+ Jacques | Paris Orly |      106
+
+
+SELECT vill_arr FROM vol NATURAL JOIN avion WHERE ville_dep LIKE 'Paris%' AND capac > ANY(SELECT capac FROM avion WHERE type LIKE 'A300');
+      vill_arr       
+---------------------
+ Toulouse
+ Marseille Marignane
+ Toulouse
+
+
+SELECT DISTINCT type FROM avion WHERE capac > (SELECT MAX(capac) FROM avion WHERE loc LIKE 'Marseille%');
+ type 
+------
+ A320 
+ A320 
+
+
+SELECT DISTINCT A.type FROM avion A INNER JOIN avion B ON B.loc LIKE 'Marseille%' AND A.capac > B.capac;
+ type 
+------
+ A310
+ A320
+
+
+SELECT COUNT(DISTINCT id_pilote) FROM vol;
+ count 
+-------
+     8
+
+
+SELECT id_pilote, nom FROM pilote WHERE id_pilote != ALL(SELECT id_pilote FROM vol);
+ id_pilote | nom  
+-----------+------
+        18 | Jean
+
+SELECT id_pilote FROM pilote EXCEPT SELECT id_pilote FROM vol;
+ id_pilote 
+-----------
+        18
+
+
+SELECT A.id_pilote FROM pilote A LEFT JOIN vol B ON A.id_pilote = B.id_pilote WHERE B.id_pilote IS NULL;
+ id_pilote 
+-----------
+        18
