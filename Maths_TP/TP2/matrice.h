@@ -1,0 +1,12 @@
+double * creerMatrice(int n);
+void detruireMatrice(double * A);
+void afficherMatrice(int n, double * A);
+void somme2Matrices(int n, double * A, double * B, double * resultat);
+void produitReelMatrice(int n, double r, double * A, double * resultat);
+void produit2Matrices(int n, double * A, double * B, double * resultat);
+void copieMatrice(int n, double * A, double * copie);
+void transposerMatrice(int n, double * A);
+void matriceSansLC(int n, double * A, int L, int C, double * resultat);
+double determinant(int taille, double* A);
+void comatrice(int n, double * A, double * comat);
+void inverserMatrice(int n, double * A, double * inverse);
