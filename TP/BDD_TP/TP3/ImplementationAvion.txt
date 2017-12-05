@@ -1,0 +1,221 @@
+DELETE  FROM vol;
+DELETE  FROM avion;
+DELETE  FROM licence_type;
+DELETE  FROM type;
+DELETE  FROM licence_pilote;
+DELETE  FROM pilote;
+DELETE  FROM aeroport;
+
+
+
+DROP TABLE vol;
+DROP TABLE avion;
+DROP TABLE licence_type;
+DROP TABLE type;
+DROP TABLE licence_pilote;
+DROP TABLE pilote;
+DROP TABLE aeroport;
+
+
+create table pilote
+(
+  id_pilote numeric(2) primary key,
+  nom_pilote varchar(50) not null,
+  nom_ville varchar(50) not null
+);
+
+create table avion
+(
+  id_avion numeric(3) primary key,
+  nom_type varchar(10) not null,
+  nb_place numeric(3) not null,
+  loc_avion varchar(50)
+);
+
+create table vol
+(
+  id_vol numeric(4),
+  id_pilote numeric(2),
+  id_avion numeric(3),
+  ville_dep varchar(50) not null,
+  ville_arr varchar(50) not null,
+  heure_dep varchar(5) not null,
+  heure_arr varchar(5) not null,
+  primary key(id_vol,id_pilote,id_avion)
+);
+
+
+
+INSERT INTO vol VALUES (1000,10,101,'Paris Orly','Toulouse','10:05','12:53');
+INSERT INTO vol VALUES (1001,10,101,'Toulouse','Paris Orly','14:25','17:07');
+INSERT INTO vol VALUES (1002,11,102,'Paris Orly','Marseille Marignane','08:35','09:30');
+INSERT INTO vol VALUES (1003,11,103,'Marseille Marignane','Strasbourg','13:15','14:48');
+INSERT INTO vol VALUES (1004,16,104,'Paris Orly','Toulouse','18:24','20:06');
+INSERT INTO vol VALUES (1005,13,105,'Toulouse','Nancy','11:05','13:53');
+INSERT INTO vol VALUES (1006,14,110,'Avignon','Paris Orly','07:35','08:22');
+INSERT INTO vol VALUES (1007,15,108,'Paris Roissy','Nancy','07:05','07:55');
+INSERT INTO vol VALUES (1008,13,123,'Lyon','Avignon','06:55','07:35');
+INSERT INTO vol VALUES (1009,17,100,'Paris Orly','Lyon','10:05','10:43');
+INSERT INTO vol VALUES (1010,15,100,'Lyon','Paris Orly','15:18','16:03');
+INSERT INTO vol VALUES (1011,12,112,'Lyon','Avignon','19:20','20:05');
+INSERT INTO vol VALUES (1012,13,112,'Paris Roissy','Lyon','17:15','18:02');
+INSERT INTO vol VALUES (1013,12,112,'Avignon','Paris Roissy','21:45','22:38');
+
+
+INSERT INTO avion VALUES (123,'A300',300,'Paris Orly');
+INSERT INTO avion VALUES (102,'A320',320,'Paris Orly');
+INSERT INTO avion VALUES (103,'A300',300,'Marseille Marignane');
+INSERT INTO avion VALUES (104,'A320',320,'Paris Roissy');
+INSERT INTO avion VALUES (105,'A300',300,'Toulouse');
+INSERT INTO avion VALUES (106,'B747',248,'Paris Orly');
+INSERT INTO avion VALUES (107,'B747',248,'Bordeaux');
+INSERT INTO avion VALUES (108,'ATR44',144,'Avignon');
+INSERT INTO avion VALUES (109,'ATR44',144,'Nancy');
+INSERT INTO avion VALUES (110,'Foker100',100,'Paris Orly');
+INSERT INTO avion VALUES (111,'Foker100',100,'Avignon');
+INSERT INTO avion VALUES (112,'B747',248,'Avignon');
+INSERT INTO avion VALUES (100,'A300',300,'Marseille Marignane');
+INSERT INTO avion VALUES (101,'A310',310,'Strasbourg');
+
+
+INSERT INTO pilote VALUES (10,'Pierre','Paris');
+INSERT INTO pilote VALUES (11,'Paul','Paris');
+INSERT INTO pilote VALUES (12,'Jacques','Paris');
+INSERT INTO pilote VALUES (13,'Fernande','Rennes');
+INSERT INTO pilote VALUES (15,'Marie','Toulouse');
+INSERT INTO pilote VALUES (16,'Philippe','Tavel');
+INSERT INTO pilote VALUES (17,'Frederic','Nancy');
+INSERT INTO pilote VALUES (14,'Cecile','Robion');
+INSERT INTO pilote VALUES (18,'Jean','Lyon');
+
+
+
+
+CREATE TABLE type
+(
+	id_type numeric(2) PRIMARY KEY,
+	nom_type varchar(10),
+	nb_place numeric(4)
+);
+
+CREATE TABLE licence_type
+(
+	nom_licence varchar(2),
+	id_type_licence numeric(2) REFERENCES type(id_type),
+	PRIMARY KEY(nom_licence, id_type_licence)
+);
+
+CREATE TABLE licence_pilote
+(
+	id_pilote numeric(2) REFERENCES pilote(id_pilote),
+	nom_licence varchar(2),
+	PRIMARY KEY( id_pilote, nom_licence)
+);
+
+CREATE TABLE aeroport
+(
+	id_aeroport numeric(2) PRIMARY KEY,
+	nom_aeroport varchar(40),
+	nom_ville varchar(40)
+);
+
+ALTER TABLE avion
+	DROP nom_type,
+	DROP nb_place,
+	DROP loc_avion,
+	ADD id_type_avion numeric(5) REFERENCES type(id_type),
+	ADD id_aeroport_avion numeric (5) REFERENCES aeroport(id_aeroport)
+;
+
+ALTER TABLE pilote
+	RENAME COLUMN nom_ville TO nom_ville_pilote
+;
+
+ALTER TABLE vol
+	DROP ville_dep,
+	DROP ville_arr,
+	ADD id_aeroport_dep numeric(5) REFERENCES aeroport(id_aeroport),
+	ADD id_aeroport_arr numeric(5) REFERENCES aeroport(id_aeroport),
+	ADD FOREIGN KEY (id_avion) REFERENCES avion(id_avion),
+	ADD FOREIGN KEY (id_pilote) REFERENCES pilote(id_pilote) 
+;
+
+INSERT INTO licence_pilote VALUES (10, 'BO');
+INSERT INTO licence_pilote VALUES (11, 'AA');
+INSERT INTO licence_pilote VALUES (12, 'BO');
+INSERT INTO licence_pilote VALUES (13, 'AB');
+INSERT INTO licence_pilote VALUES (13, 'AT');
+INSERT INTO licence_pilote VALUES (14, 'AT');
+INSERT INTO licence_pilote VALUES (15, 'AT');
+INSERT INTO licence_pilote VALUES (15, 'BO');
+INSERT INTO licence_pilote VALUES (16, 'AA');
+INSERT INTO licence_pilote VALUES (16, 'BT');
+INSERT INTO licence_pilote VALUES (17, 'AA');
+INSERT INTO licence_pilote VALUES (18, 'BO');
+
+INSERT INTO type VALUES (1, 'A300', 300);
+INSERT INTO type VALUES (2, 'A310', 310);
+INSERT INTO type VALUES (3, 'A320', 320);
+INSERT INTO type VALUES (4, 'A330', 330);
+INSERT INTO type VALUES (5, 'B747', 248);
+INSERT INTO type VALUES (6, 'ATR44', 144);
+INSERT INTO type VALUES (7, 'Foker100', 100);
+
+
+INSERT INTO licence_type VALUES ('AA', 1);
+INSERT INTO licence_type VALUES ('AA', 2);
+INSERT INTO licence_type VALUES ('AA', 3);
+INSERT INTO licence_type VALUES ('AA', 4);
+INSERT INTO licence_type VALUES ('BO', 5);
+INSERT INTO licence_type VALUES ('AT', 6);
+INSERT INTO licence_type VALUES ('AT', 7);
+INSERT INTO licence_type VALUES ('AB', 1);
+INSERT INTO licence_type VALUES ('AB', 2);
+INSERT INTO licence_type VALUES ('AB', 3);
+INSERT INTO licence_type VALUES ('AB', 4);
+INSERT INTO licence_type VALUES ('AB', 5);
+
+INSERT INTO aeroport VALUES (1 ,'Avignon', 'Avignon');
+INSERT INTO aeroport VALUES (2 ,'Bordeaux', 'Bordeaux');
+INSERT INTO aeroport VALUES (3 ,'Marseille Marignane','Marseille');
+INSERT INTO aeroport VALUES (4 ,'Nancy','Nancy');
+INSERT INTO aeroport VALUES (5 ,'Paris Orly','Paris');
+INSERT INTO aeroport VALUES (6 ,'Paris Roissy','Paris');
+INSERT INTO aeroport VALUES (7 ,'Strasbourg','Strasbourg');
+INSERT INTO aeroport VALUES (8 ,'Toulouse','Toulouse');
+INSERT INTO aeroport VALUES (9 ,'Lyon','Lyon');
+
+
+DELETE  FROM vol;
+DELETE  FROM avion;
+
+INSERT INTO avion VALUES (123, 1, 5);
+INSERT INTO avion VALUES (102, 3, 5);
+INSERT INTO avion VALUES (103, 1, 3);
+INSERT INTO avion VALUES (104, 3, 6);
+INSERT INTO avion VALUES (105, 2, 8);
+INSERT INTO avion VALUES (106, 5, 5);
+INSERT INTO avion VALUES (107, 5, 2);
+INSERT INTO avion VALUES (108, 6, 1);
+INSERT INTO avion VALUES (109, 6, 4);
+INSERT INTO avion VALUES (110, 7, 5);
+INSERT INTO avion VALUES (111, 7, 1);
+INSERT INTO avion VALUES (112, 5, 1);
+INSERT INTO avion VALUES (100, 1, 3);
+INSERT INTO avion VALUES (101, 2, 7);
+
+INSERT INTO vol VALUES (1000,10,101,'10:05','12:53', 5, 8);
+INSERT INTO vol VALUES (1001,10,101,'14:25','17:07', 8, 5);
+INSERT INTO vol VALUES (1002,11,102,'08:35','09:30', 5, 3);
+INSERT INTO vol VALUES (1003,11,103,'13:15','14:48', 3, 7);
+INSERT INTO vol VALUES (1004,16,104,'18:24','20:06', 5, 8);
+INSERT INTO vol VALUES (1005,13,105,'11:05','13:53', 8, 4);
+INSERT INTO vol VALUES (1006,14,110,'07:35','08:22', 1, 5);
+INSERT INTO vol VALUES (1007,15,108,'07:05','07:55', 6, 4);
+INSERT INTO vol VALUES (1008,13,123,'06:55','07:35', 9, 1);
+INSERT INTO vol VALUES (1009,17,100,'10:05','10:43', 5, 9);
+INSERT INTO vol VALUES (1010,15,100,'15:18','16:03', 9, 5);
+INSERT INTO vol VALUES (1011,12,112,'19:20','20:05', 9, 1);
+INSERT INTO vol VALUES (1012,13,112,'17:15','18:02', 6, 9);
+INSERT INTO vol VALUES (1013,12,112,'21:45','22:38', 1, 6);
+

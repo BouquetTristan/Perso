@@ -1,0 +1,246 @@
+/************************/
+/*** avions VERSION_1 ***/
+/************************/
+
+/*** Destruction des tables existantes ***/
+
+DELETE  FROM vol;
+DELETE  FROM avion;
+DELETE  FROM licence_type;
+DELETE  FROM type;
+DELETE  FROM licence_pilote;
+DELETE  FROM pilote;
+DELETE  FROM aeroport;
+
+DROP TABLE vol;
+DROP TABLE avion;
+DROP TABLE licence_type;
+DROP TABLE type;
+DROP TABLE licence_pilote;
+DROP TABLE pilote;
+DROP TABLE aeroport;
+
+
+/*** Implémentation des relations ***/
+CREATE TABLE vol (
+	id_vol INT PRIMARY KEY,
+	id_pilote INT,
+	id_avion INT,
+	ville_dep TEXT,
+	ville_arr TEXT,
+	h_dep VARCHAR(5),
+	h_arr VARCHAR(5)	
+);
+
+CREATE TABLE avion (
+	id_avion INT PRIMARY KEY,
+	type TEXT,
+	capac INT,
+	loc TEXT
+);
+
+CREATE TABLE pilote (
+	id_pilote INT PRIMARY KEY,
+	nom TEXT,
+	ville TEXT
+);
+/*** FIN Implémentation des relations ***/
+
+/*** Remplissage vol ***/
+INSERT INTO vol VALUES (1000,10,101,'Paris Orly','Toulouse','10:05','12:53');
+INSERT INTO vol VALUES (1001,10,101,'Toulouse','Paris Orly','14:25','17:07');
+INSERT INTO vol VALUES (1002,11,102,'Paris Orly','Marseille Marignane','08:35','09:30');
+INSERT INTO vol VALUES (1003,11,103,'Marseille Marignane','Strasbourg','13:15','14:48');
+INSERT INTO vol VALUES (1004,16,104,'Paris Orly','Toulouse','18:24','20:06');
+INSERT INTO vol VALUES (1005,13,105,'Toulouse','Nancy','11:05','13:53');
+INSERT INTO vol VALUES (1006,14,110,'Avignon','Paris Orly','07:35','08:22');
+INSERT INTO vol VALUES (1007,15,108,'Paris Roissy','Nancy','07:05','07:55');
+INSERT INTO vol VALUES (1008,13,123,'Lyon','Avignon','06:55','07:35');
+INSERT INTO vol VALUES (1009,17,100,'Paris Orly','Lyon','10:05','10:43');
+INSERT INTO vol VALUES (1010,15,100,'Lyon','Paris Orly','15:18','16:03');
+INSERT INTO vol VALUES (1011,12,112,'Lyon','Avignon','19:20','20:05');
+INSERT INTO vol VALUES (1012,13,112,'Paris Roissy','Lyon','17:15','18:02');
+INSERT INTO vol VALUES (1013,12,112,'Avignon','Paris Roissy','21:45','22:38');
+
+/*** Remplissage avion ***/
+INSERT INTO avion VALUES (123,'A300',300,'Paris Orly');
+INSERT INTO avion VALUES (102,'A320',320,'Paris Orly');
+INSERT INTO avion VALUES (103,'A300',300,'Marseille Marignane');
+INSERT INTO avion VALUES (104,'A320',320,'Paris Roissy');
+INSERT INTO avion VALUES (105,'A300',300,'Toulouse');
+INSERT INTO avion VALUES (106,'B747',248,'Paris Orly');
+INSERT INTO avion VALUES (107,'B747',248,'Bordeaux');
+INSERT INTO avion VALUES (108,'ATR44',144,'Avignon');
+INSERT INTO avion VALUES (109,'ATR44',144,'Nancy');
+INSERT INTO avion VALUES (110,'Foker100',100,'Paris Orly');
+INSERT INTO avion VALUES (111,'Foker100',100,'Avignon');
+INSERT INTO avion VALUES (112,'B747',248,'Avignon');
+INSERT INTO avion VALUES (100,'A300',300,'Marseille Marignane');
+INSERT INTO avion VALUES (101,'A310',310,'Strasbourg');
+
+/*** Remplissage pilote ***/
+INSERT INTO pilote VALUES (10,'Pierre','Paris');
+INSERT INTO pilote VALUES (11,'Paul','Paris');
+INSERT INTO pilote VALUES (12,'Jacques','Paris');
+INSERT INTO pilote VALUES (13,'Fernande','Rennes');
+INSERT INTO pilote VALUES (15,'Marie','Toulouse');
+INSERT INTO pilote VALUES (16,'Philippe','Tavel');
+INSERT INTO pilote VALUES (17,'Frederic','Nancy');
+INSERT INTO pilote VALUES (14,'Cecile','Robion');
+INSERT INTO pilote VALUES (18,'Jean','Lyon');
+
+
+/****************************/
+/*** FIN avions VERSION_1 ***/
+/****************************/
+
+
+
+
+/************************/ 
+/*** avions VERSION_2 ***/
+/************************/
+
+
+/********************************/
+/*** Modifications BDD avions ***/
+
+/*** Implémentation des nouvelles relations ***/
+CREATE TABLE aeroport(
+    id_aeroport INTEGER NOT NULL, 
+    nom_aeroport VARCHAR(50) NOT NULL,
+    nom_ville VARCHAR(50) NOT NULL,
+    PRIMARY KEY(id_aeroport)
+);
+
+CREATE TABLE type(
+    id_type INT NOT NULL, 
+    nom_type VARCHAR(50) NOT NULL,
+    nb_place INT NOT NULL,
+    PRIMARY KEY(id_type)
+);
+
+CREATE TABLE licence_type( 	 
+	nom_licence VARCHAR(255),
+    id_type_licence INT NOT NULL, 
+	FOREIGN KEY (id_type_licence) REFERENCES type (id_type), 
+	PRIMARY KEY(nom_licence, id_type_licence) 
+);
+
+CREATE TABLE licence_pilote(
+	id_pilote INT NOT NULL, 
+	nom_licence VARCHAR(100),
+	FOREIGN KEY (id_pilote) REFERENCES pilote (id_pilote), 
+	PRIMARY KEY(nom_licence, id_pilote) 
+);
+/*** FIN implémentation des nouvelles relations ***/
+
+
+/* Remplissage licence_pilote */
+INSERT INTO licence_pilote VALUES (10, 'BO');
+INSERT INTO licence_pilote VALUES (11, 'AA');
+INSERT INTO licence_pilote VALUES (12, 'BO');
+INSERT INTO licence_pilote VALUES (13, 'AB');
+INSERT INTO licence_pilote VALUES (13, 'AT');
+INSERT INTO licence_pilote VALUES (14, 'AT');
+INSERT INTO licence_pilote VALUES (15, 'AT');
+INSERT INTO licence_pilote VALUES (15, 'BO');
+INSERT INTO licence_pilote VALUES (16, 'AA');
+INSERT INTO licence_pilote VALUES (16, 'BT');
+INSERT INTO licence_pilote VALUES (17, 'AA');
+INSERT INTO licence_pilote VALUES (18, 'BO');
+
+/* Remplissage type */
+INSERT INTO type VALUES (1, 'A300', 300);
+INSERT INTO type VALUES (2, 'A310', 310);
+INSERT INTO type VALUES (3, 'A320', 320);
+INSERT INTO type VALUES (4, 'A330', 330);
+INSERT INTO type VALUES (5, 'B747', 248);
+INSERT INTO type VALUES (6, 'ATR44', 144);
+INSERT INTO type VALUES (7, 'Foker100', 100);
+
+/* Remplissage licence_type */
+INSERT INTO licence_type VALUES ('AA', 1);
+INSERT INTO licence_type VALUES ('AA', 2);
+INSERT INTO licence_type VALUES ('AA', 3);
+INSERT INTO licence_type VALUES ('AA', 4);
+INSERT INTO licence_type VALUES ('BO', 5);
+INSERT INTO licence_type VALUES ('AT', 6);
+INSERT INTO licence_type VALUES ('AT', 7);
+INSERT INTO licence_type VALUES ('AB', 1);
+INSERT INTO licence_type VALUES ('AB', 2);
+INSERT INTO licence_type VALUES ('AB', 3);
+INSERT INTO licence_type VALUES ('AB', 4);
+INSERT INTO licence_type VALUES ('AB', 5);
+
+/* Remplissage aeroport */
+INSERT INTO aeroport VALUES (1, 'PARIS ROISSY', 'ROISSY');
+INSERT INTO aeroport VALUES (2, 'PARIS ORLY','ORLY');
+INSERT INTO aeroport VALUES (3, 'PARIS CHARLES DE GAULLE','ROISSY');
+INSERT INTO aeroport VALUES (4, 'TOULOUSE-BLAGNAC','TOULOUSE');
+INSERT INTO aeroport VALUES (5, 'NICE COTE D''AZUR','NICE'); /* '' pour saisir le caractère ' */
+INSERT INTO aeroport VALUES (6, 'MARSEILLE MARIGNANE','MARSEILLE');
+INSERT INTO aeroport VALUES (7, 'LYON SAINT-EXUPERY','LYON');
+INSERT INTO aeroport VALUES (8, 'STRASBOURG','STRASBOURG');
+INSERT INTO aeroport VALUES (9, 'BREST','BREST');
+INSERT INTO aeroport VALUES (10, 'MONTPELLIER','MONTPELLIER');
+INSERT INTO aeroport VALUES (11, 'NANCY METZ','NANCY');
+INSERT INTO aeroport VALUES (12, 'LANNION','LANNION');
+/*** Ajout des informations des 2 aéroports manquants du script original d'UMTICE ***/
+INSERT INTO aeroport VALUES (13, 'AVIGNON-PROVENCE','AVIGNON');
+INSERT INTO aeroport VALUES (14, 'BORDEAUX-MERIGNAC','BORDEAUX');
+
+
+/*** MAJ avion ***/
+ALTER TABLE avion ADD COLUMN id_type_avion INT;
+ALTER TABLE avion ADD COLUMN id_aeroport_avion INT;
+
+UPDATE avion SET loc=upper(loc);
+UPDATE avion SET id_aeroport_avion = (
+    SELECT id_aeroport
+    FROM aeroport
+    WHERE STRPOS(nom_aeroport, loc) != 0
+);
+
+UPDATE avion SET id_type_avion = (
+    SELECT id_type
+    FROM type
+    WHERE type.nom_type = avion.type
+);
+
+ALTER TABLE avion DROP COLUMN type;
+ALTER TABLE avion DROP COLUMN capac;
+ALTER TABLE avion DROP COLUMN loc;
+/*** FIN MAJ avion ***/
+
+/*** MAJ vol ***/
+ALTER TABLE vol ADD COLUMN id_aeroport_dep INT;
+ALTER TABLE vol ADD COLUMN id_aeroport_arr INT;
+
+UPDATE vol SET ville_dep = upper(ville_dep);
+UPDATE vol SET id_aeroport_dep = (
+    SELECT id_aeroport
+    FROM aeroport 
+    WHERE STRPOS(nom_aeroport,ville_dep) != 0
+);
+
+UPDATE vol SET ville_arr = upper(ville_arr);
+UPDATE vol SET id_aeroport_arr = (
+    SELECT id_aeroport
+    FROM aeroport 
+    WHERE STRPOS(nom_aeroport,ville_arr) != 0
+);
+
+ALTER TABLE vol DROP COLUMN ville_dep;
+ALTER TABLE vol DROP COLUMN ville_arr;
+ALTER TABLE vol RENAME COLUMN h_dep TO heure_dep;
+ALTER TABLE vol RENAME COLUMN h_arr TO heure_arr;
+/*** FIN MAJ vol ***/
+
+/*** MAJ pilote ***/
+ALTER TABLE pilote RENAME COLUMN ville TO nom_ville_pilote;
+ALTER TABLE pilote RENAME COLUMN nom TO nom_pilote;
+/*** FIN MAJ pilote ***/
+
+/*** FIN modifications BDD avions ***/
+/************************************/

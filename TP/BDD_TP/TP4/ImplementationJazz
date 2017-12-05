@@ -1,0 +1,255 @@
+
+/** Q1  **/
+/*
+CREATE SCHEMA cdjazz;
+
+SET search_path TO cdjazz;
+
+*/
+
+DROP TABLE compositeur ;
+DROP TABLE interprete ;
+DROP TABLE edition ;
+DROP TABLE leader ;
+DROP TABLE Personne ;
+DROP TABLE Enregistrement ;
+DROP TABLE CD ;
+
+/** Implementation LV1 **/
+CREATE TABLE Personne
+(
+	id_pers integer NOT NULL,
+	nom varchar(50) NOT NULL,
+	prenom varchar(50) NOT NULL,
+	date_naiss date NOT NULL,
+	date_dec date,
+	nationalite varchar(50),
+	PRIMARY KEY(id_pers)
+);
+
+CREATE TABLE CD
+(
+	id_cd integer,
+	titre_cd varchar(50),
+	id_edi integer,
+	note_art integer,
+	note_tech integer,
+	PRIMARY KEY(id_cd)
+);
+
+CREATE TABLE Enregistrement
+(
+	id_cd integer,
+	id_enr integer,
+	titre varchar(50),
+	duree integer,
+	annee integer,
+	lieu varchar(50),
+	cond varchar(50),
+	FOREIGN KEY(id_cd) REFERENCES CD (id_cd),
+	PRIMARY KEY(id_cd, id_enr)
+);
+/*
+-- personne
+INSERT INTO personne VALUES (1,'mikta','boris','10-APR-1961','30-08-1999','americain');
+INSERT INTO personne VALUES (2,'jorris','achille','10-JAN-1955',NULL,'français');
+INSERT INTO personne VALUES (3,'coltrane','john','21-OCT-1957','08-MAY-2006','americain');
+INSERT INTO personne VALUES (4,'monk','thelonious','25-DEC-1968','29-MAR-2009','americain');
+INSERT INTO personne VALUES (5,'white','bary','21-FEB-1962',NULL,'americain');
+INSERT INTO personne VALUES (6,'mingus','charly','10-JAN-1963',NULL,'americain');
+INSERT INTO personne VALUES (7,'smith','ted','28-AUG-1948',NULL,'americain');
+INSERT INTO personne VALUES (8,'spark','tom','26-MAR-1963',NULL,'americain');
+INSERT INTO personne VALUES (9,'rozzi','ricky','10-JAN-1958',NULL,'americain');
+INSERT INTO personne VALUES (10,'dupond','william','01-MAY-1956',NULL,'americain');
+
+ -- disque
+INSERT INTO cd VALUES (1,'blues chicago',1,8,7);
+INSERT INTO cd VALUES (2,'evidence',1,9,6);
+INSERT INTO cd VALUES (3,'ballad in paris',2,8,9);
+INSERT INTO cd VALUES (4,'mississipi notes',4,6,7);
+
+-- enreg
+INSERT INTO enregistrement VALUES (1,1,'evidence',200,1983,'chicago','public');
+INSERT INTO enregistrement VALUES (1,2,'on the moon',256,1984,'chicago','public');
+INSERT INTO enregistrement VALUES (1,3,'blue river',159,1984,'chicago','public');
+INSERT INTO enregistrement VALUES (2,1,'blues is my god',540,1972,'new-york','studio');
+INSERT INTO enregistrement VALUES (2,2,'blues campagn',189,1972,'new-york','studio');
+INSERT INTO enregistrement VALUES (2,3,'pain',280,1972,'new-york','acoustic');
+INSERT INTO enregistrement VALUES (3,1,'crying sky',156,1995,'paris','public');
+INSERT INTO enregistrement VALUES (3,2,'love and peace',205,1995,'paris','public');
+INSERT INTO enregistrement VALUES (3,3,'jump',164,1995,'paris','public');
+INSERT INTO enregistrement VALUES (3,4,'peace',180,1995,'philadelphie','public');
+INSERT INTO enregistrement VALUES (4,1,'slave and glave',199,1978,'saint-louis','public');
+INSERT INTO enregistrement VALUES (4,2,'move the gov',245,1978,'saint-louis','acoustic');
+INSERT INTO enregistrement VALUES (4,3,'rainbow',180,1978,'saint-louis','public');
+INSERT INTO enregistrement VALUES (4,4,'mississipi',200,1978,'londres','studio');
+*/
+/*
+-- Q1
+SELECT * FROM enregistrement ORDER BY annee ;
+-- Q2
+SELECT nom, prenom FROM personne WHERE current_date-date_dec < 365*20;
+-- Q3
+SELECT * FROM enregistrement WHERE cond = 'public' AND (lieu = 'saint-louis' OR lieu = 'chicago') AND annee > 1980;
+-- Q4
+SELECT id_cd FROM enregistrement WHERE duree = (SELECT MAX(duree) FROM enregistrement WHERE (cond = 'public' OR cond = 'acoustic'));
+-- Q5
+SELECT titre_cd, SUM(duree) AS "duree du cd" FROM enregistrement NATURAL JOIN cd GROUP BY titre_cd;
+-- Q6
+SELECT titre_cd, COUNT(id_enr) AS "nombre enr" FROM enregistrement NATURAL JOIN cd GROUP BY titre_cd;
+*/
+
+
+
+/** Implementation LV2 **/
+
+
+
+CREATE TABLE Interprete
+(
+	id_cd integer,
+	id_enr integer,
+	id_inter integer,
+	instru varchar(50),
+	FOREIGN KEY(id_inter) REFERENCES Personne (id_pers),
+	FOREIGN KEY(id_cd) REFERENCES CD (id_cd),
+	PRIMARY KEY(id_cd, id_enr, id_inter)
+);
+
+CREATE TABLE Leader
+(
+	id_cd integer,
+	id_leader integer,
+	FOREIGN KEY(id_leader) REFERENCES Personne (id_pers),
+	FOREIGN KEY(id_cd) REFERENCES CD (id_cd),
+	PRIMARY KEY(id_cd, id_leader)
+);
+
+CREATE TABLE Compositeur
+(
+	id_cd integer,
+	id_enr integer,
+	id_compo integer,
+	FOREIGN KEY(id_cd) REFERENCES CD (id_cd),
+	FOREIGN KEY(id_compo) REFERENCES Personne (id_pers),
+	PRIMARY KEY(id_compo, id_enr, id_cd) 
+);
+
+CREATE TABLE Edition
+(
+	id_edi integer,
+	nom_edi varchar(50),
+	id_resp_edition integer,
+	pays_edi varchar(50),
+	FOREIGN KEY(id_resp_edition) REFERENCES Personne (id_pers),
+	PRIMARY KEY(id_edi)
+);
+
+
+-- fill in data
+
+ 
+-- individu
+INSERT INTO personne VALUES (1,'mikta','boris','10-APR-1961','30-08-1999','usa');
+INSERT INTO personne VALUES (2,'jorris','achille','10-JAN-1955',NULL,'france');
+INSERT INTO personne VALUES (3,'coltrane','john','21-OCT-1957','08-MAY-2006','usa');
+INSERT INTO personne VALUES (4,'monk','thelonious','25-DEC-1968','29-MAR-2009','usa');
+INSERT INTO personne VALUES (5,'white','bary','21-FEB-1962',NULL,'usa');
+INSERT INTO personne VALUES (6,'mingus','charly','10-JAN-1963',NULL,'usa');
+INSERT INTO personne VALUES (7,'smith','ted','28-AUG-1948',NULL,'usa');
+INSERT INTO personne VALUES (8,'spark','tom','26-MAR-1963',NULL,'usa');
+INSERT INTO personne VALUES (9,'rozzi','ricky','10-JAN-1958',NULL,'usa');
+INSERT INTO personne VALUES (10,'dupond','william','01-MAY-1956',NULL,'usa');
+
+
+
+-- disque
+INSERT INTO cd VALUES (1,'blues chicago',1,8,7);
+INSERT INTO cd VALUES (2,'evidence',1,9,6);
+INSERT INTO cd VALUES (3,'ballad in paris',2,8,9);
+INSERT INTO cd VALUES (4,'mississipi notes',4,6,7);
+
+-- enreg
+INSERT INTO Enregistrement VALUES (1,1,'evidence',200,1983,'chicago','public');
+INSERT INTO Enregistrement VALUES (1,2,'on the moon',256,1984,'chicago','public');
+INSERT INTO Enregistrement VALUES (1,3,'blue river',159,1984,'chicago','public');
+INSERT INTO Enregistrement VALUES (2,1,'blues is my god',540,1972,'new-york','studio');
+INSERT INTO Enregistrement VALUES (2,2,'blues campagn',189,1972,'new-york','studio');
+INSERT INTO Enregistrement VALUES (2,3,'pain',280,1972,'new-york','acoustic');
+INSERT INTO Enregistrement VALUES (3,1,'crying sky',156,1995,'paris','public');
+INSERT INTO Enregistrement VALUES (3,2,'love and peace',205,1995,'paris','public');
+INSERT INTO Enregistrement VALUES (3,3,'jump',164,1995,'paris','public');
+INSERT INTO Enregistrement VALUES (3,4,'peace',180,1995,'philadelphie','public');
+INSERT INTO Enregistrement VALUES (4,1,'slave and glave',199,1978,'saint-louis','public');
+INSERT INTO Enregistrement VALUES (4,2,'move the gov',245,1978,'saint-louis','acoustic');
+INSERT INTO Enregistrement VALUES (4,3,'rainbow',180,1978,'saint-louis','public');
+INSERT INTO Enregistrement VALUES (4,4,'mississipi',200,1978,'londres','studio');
+
+
+-- compo
+INSERT INTO Compositeur VALUES (1,1,1);
+INSERT INTO Compositeur VALUES (1,2,2);
+INSERT INTO Compositeur VALUES (1,3,1);
+INSERT INTO Compositeur VALUES (1,3,2);
+INSERT INTO Compositeur VALUES (1,3,5);
+INSERT INTO Compositeur VALUES (2,1,6);
+INSERT INTO Compositeur VALUES (2,2,6);
+INSERT INTO Compositeur VALUES (2,3,3);
+INSERT INTO Compositeur VALUES (2,3,1);
+INSERT INTO Compositeur VALUES (3,1,4);
+INSERT INTO Compositeur VALUES (3,2,4);
+INSERT INTO Compositeur VALUES (3,2,5);
+INSERT INTO Compositeur VALUES (3,3,5);
+INSERT INTO Compositeur VALUES (4,1,1);
+INSERT INTO Compositeur VALUES (4,1,5);
+INSERT INTO Compositeur VALUES (4,2,1);
+INSERT INTO Compositeur VALUES (4,2,2);
+INSERT INTO Compositeur VALUES (4,3,1);
+INSERT INTO Compositeur VALUES (4,3,3);
+INSERT INTO Compositeur VALUES (4,4,2);
+INSERT INTO Compositeur VALUES (4,4,6);
+
+
+-- interp
+INSERT INTO Interprete VALUES (1,1,1,'vocal');
+INSERT INTO Interprete VALUES (1,1,2,'bandoneon');
+INSERT INTO Interprete VALUES (1,1,4,'bass');
+INSERT INTO Interprete VALUES (1,2,1,'vocal');
+-- INSERT INTO interp VALUES (1,2,1,'guitar');
+INSERT INTO Interprete VALUES (1,3,1,'drum');
+INSERT INTO Interprete VALUES (2,1,3,'vocal');
+INSERT INTO Interprete VALUES (2,1,4,'bass');
+INSERT INTO Interprete VALUES (2,1,5,'bandoneon');
+INSERT INTO Interprete VALUES (2,2,3,'guitar');
+INSERT INTO Interprete VALUES (2,3,3,'vocal');
+-- INSERT INTO interp VALUES (2,3,3,'guitar');
+INSERT INTO Interprete VALUES (3,1,6,'vocal');
+INSERT INTO Interprete VALUES (3,1,4,'bass');
+INSERT INTO Interprete VALUES (3,1,2,'trumpet');
+INSERT INTO Interprete VALUES (3,2,6,'bandoneon');
+INSERT INTO Interprete VALUES (3,2,5,'guitar');
+INSERT INTO Interprete VALUES (3,2,2,'vocal');
+INSERT INTO Interprete VALUES (3,3,6,'vocal');
+INSERT INTO Interprete VALUES (3,3,2,'vocal');
+INSERT INTO Interprete VALUES (4,1,2,'trumpet');
+INSERT INTO Interprete VALUES (4,2,2,'vocal');
+INSERT INTO Interprete VALUES (4,2,5,'guitar');
+INSERT INTO Interprete VALUES (4,2,3,'vocal');
+INSERT INTO Interprete VALUES (4,3,2,'bandoneon');
+INSERT INTO Interprete VALUES (4,4,3,'guitar');
+INSERT INTO Interprete VALUES (3,4,3,'guitar');
+
+-- leader
+INSERT INTO leader VALUES (4,2);
+INSERT INTO leader VALUES (3,6);
+INSERT INTO leader VALUES (2,3);
+INSERT INTO leader VALUES (1,1);
+
+INSERT INTO Edition VALUES (1,'virgin',8,'USA');
+INSERT INTO Edition VALUES (2,'blues_labels',10,'USA');
+INSERT INTO Edition VALUES (3,'monk',7,'France');
+INSERT INTO Edition VALUES (4,'tictac',9,'France');
+
+--Requete
+SELECT COUNT(nb_instru) FROM (SELECT DISTINCT instru nb_instru FROM Interprete) AS resultat;
+SELECT DISTINCT C.titre_cd FROM Leader INNER JOIN Personne ON Leader.id_leader = Personne.id_pers NATURAL JOIN CD C WHERE nom LIKE('%o%');
