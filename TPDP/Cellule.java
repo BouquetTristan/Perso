@@ -50,11 +50,5 @@ public class Cellule  {
 		return this.etat.estVivante();
 	}
 
-	public String to_s()
-	{
-		if(this.estVivante())
-			return "V";
-		return "F";
-	}
 
 }
