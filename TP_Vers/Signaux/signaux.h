@@ -6,5 +6,9 @@
  * - verDeTerre
  */
 
+#define SIG_MORT SIGUSR1
+#define SIG_VICTOIRE SIGUSR2
+#define SIG_JOUER SIGHUP
+
 
 #endif
